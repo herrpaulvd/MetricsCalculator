@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsCalculator", "MetricsCalculator\MetricsCalculator.csproj", "{217D7214-20BF-4D92-9413-355C3812C4A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{217D7214-20BF-4D92-9413-355C3812C4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{217D7214-20BF-4D92-9413-355C3812C4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{217D7214-20BF-4D92-9413-355C3812C4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{217D7214-20BF-4D92-9413-355C3812C4A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E3AD5E0-2FE0-447F-BB4A-9BC602E719C8}
+	EndGlobalSection
+EndGlobal
