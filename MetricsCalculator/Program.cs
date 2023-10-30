@@ -178,7 +178,11 @@ int Noprnd = literals.Length
 // число уникальных операторов есть сумма двух составляющих
 int NUOprtr =
     // 1) число всех обычных операторов, хотя бы раз задействованных
-    allEnumOperatorValues.Count(v => nodes.Any(node => node.IsKind(v)))
+    // включая разделители типа ";" и "{}", как это требует определение
+    // но исключая "." и "()", поскольку вместо них - методы
+    allEnumOperatorValues.Count(v => v != SyntaxKind.SimpleAssignmentExpression
+        && v != SyntaxKind.InvocationExpression
+        && nodes.Any(node => node.IsKind(v)))
     // 2) число всех методов, хотя бы раз вызванных
     + invokedMethods
     // для различения методов нужен ключ
