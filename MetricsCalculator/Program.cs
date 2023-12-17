@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using System.Text;
 
 string filename = args.Length < 1 ? Console.ReadLine() : args[0];
 
@@ -240,3 +242,56 @@ Console.WriteLine($"Task5::HDiff = {HDiff}");
 double HEff = HDiff * HPVol;
 Console.WriteLine($"Task5::HEff = {HEff}");
 
+// МакКейб
+// Считать цикломатическую сложность имеет смысл только для отдельных методов
+// считая вызовы методов атомарными операциями
+// ввиду необходимости анализа графа потока управления (CFG)
+// иначе если для его построения инлайнить рекурсивный метод
+// то он преобразуется в бесконечный подграф.
+
+Console.WriteLine("Task6:");
+void McCabe(IMethodBodyOperation operation)
+{
+    var methodName = operation.Syntax.ChildTokens().First(tk => tk.IsKind(SyntaxKind.IdentifierToken)).Text;
+    var line = ast.GetLineSpan(operation.Syntax.Span).StartLinePosition;
+    // построим CFG
+    var cfg = ControlFlowGraph.Create(operation);
+    // узлы графа - BasicBlocks
+    // есть одно начало - Entry, и один конец - Exit (куда сходятся все return'ы)
+    // дуги - ControlFlowBranches
+    var blocks = cfg.Blocks;
+    int v = 2 - blocks.Length; // без учёта возможно большого числа компонент связности + дуг
+    foreach(var b in blocks)
+    {
+        if (b.ConditionalSuccessor is not null) v++;
+        if (b.FallThroughSuccessor is not null) v++;
+    }
+    // теперь учтём остальные компоненты связности через dfs
+    // массив used, изначально посещённые - reachable blocks
+    bool[] used = blocks.Select(b => b.IsReachable).ToArray();
+    void dfs(int ordinal)
+    {
+        if (!used[ordinal])
+        {
+            used[ordinal] = true;
+            var block = blocks[ordinal];
+            if (block.ConditionalSuccessor?.Destination is not null)
+                dfs(block.ConditionalSuccessor.Destination.Ordinal);
+            if(block.FallThroughSuccessor?.Destination is not null)
+                dfs(block.FallThroughSuccessor.Destination.Ordinal);
+            foreach (var pre in block.Predecessors)
+                if (pre.Destination is not null)
+                    dfs(pre.Destination.Ordinal);
+        }
+    }
+    for(int i = 0; i < blocks.Length; i++)
+        if (!used[i])
+        {
+            v += 2;
+            dfs(i);
+        }
+    Console.WriteLine($"V(G({methodName} at {line})) = {v}");
+}
+
+foreach (var m in semops.Select(op => op as IMethodBodyOperation).Where(op => op is not null))
+    McCabe(m);
